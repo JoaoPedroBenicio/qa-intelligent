@@ -1,0 +1,31 @@
+module.exports = {
+  root: true,
+  env: { browser: true, es2022: true, node: true },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime',
+    'plugin:react-hooks/recommended',
+    'plugin:jsx-a11y/recommended',
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    ecmaFeatures: { jsx: true },
+  },
+  settings: { react: { version: '18.3' } },
+  plugins: ['@typescript-eslint', 'react', 'react-hooks', 'jsx-a11y'],
+  rules: {
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
+    'react/prop-types': 'off',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'jsx-a11y/label-has-associated-control': ['error', { required: { some: ['nesting', 'id'] } }],
+    'jsx-a11y/no-autofocus': 'warn',
+  },
+  ignorePatterns: ['dist', 'node_modules', '*.config.js', '*.config.ts'],
+};
