@@ -1,12 +1,21 @@
 const MODEL = 'meta/llama-3.1-70b-instruct';
 const API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions';
+const STATIC_FILES = __STATIC_FILES__;
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+
+function staticResponse(pathname) {
+  const path = pathname === '/' ? '/index.html' : pathname;
+  const file = STATIC_FILES[path];
+  if (!file) return new Response('Not found', { status: 404 });
+  const bytes = Uint8Array.from(atob(file.content), (char) => char.charCodeAt(0));
+  return new Response(bytes, { headers: { 'Content-Type': file.type } });
+}
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname !== '/api/generate') return env.ASSETS.fetch(request);
+    if (url.pathname !== '/api/generate') return staticResponse(url.pathname);
     if (request.method !== 'POST') return json({ error: 'Método não permitido.' }, 405);
     if (!env.NVIDIA_API_KEY) return json({ error: 'A IA ainda não está configurada.' }, 503);
     try {
