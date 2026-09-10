@@ -1,4 +1,4 @@
-const MODEL = 'nvidia/nemotron-3.5-lightning-30b-a3b';
+const MODEL = 'nvidia/nemotron-3-ultra-550b-a55b';
 const API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions';
 const STATIC_FILES = __STATIC_FILES__;
 
