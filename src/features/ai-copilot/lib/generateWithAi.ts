@@ -16,12 +16,26 @@ const AiTestCaseSchema = z.object({
 type GenerateInput = { text: string; attachments: { name: string; size: number; mimeType: string }[] };
 type Fetcher = typeof fetch;
 
+function normalizeAiPayload(payload: unknown): unknown {
+  if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return payload;
+  const record = payload as Record<string, unknown>;
+  const priority = typeof record.priority === 'string' ? record.priority.trim().toLowerCase() : record.priority;
+  const normalizedPriority = priority === 'p0' || priority === 'p1' || priority === 'high'
+    ? 'Alta'
+    : priority === 'p2' || priority === 'medium'
+      ? 'Média'
+      : priority === 'p3' || priority === 'low'
+        ? 'Baixa'
+        : record.priority;
+  return { ...record, priority: normalizedPriority };
+}
+
 export async function generateTestCaseWithAi(input: GenerateInput, fetcher: Fetcher = fetch): Promise<Omit<TestCaseVersion, 'id' | 'createdAt'>> {
   const response = await fetcher('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) });
   const payload: unknown = await response.json();
   if (!response.ok) {
     throw new Error(typeof payload === 'object' && payload !== null && 'error' in payload ? String(payload.error) : 'Não foi possível gerar o caso de teste.');
   }
-  const generated = AiTestCaseSchema.parse(payload);
+  const generated = AiTestCaseSchema.parse(normalizeAiPayload(payload));
   return { ...generated, source: 'ai-video', steps: generated.steps.map((step) => ({ ...step, id: crypto.randomUUID() })) };
 }

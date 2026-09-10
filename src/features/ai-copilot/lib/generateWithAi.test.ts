@@ -9,7 +9,7 @@ describe('generateTestCaseWithAi', () => {
           title: 'Validar login',
           description: 'Confere o acesso.',
           preconditions: 'Usuário cadastrado.',
-          priority: 'Alta',
+          priority: 'P0',
           tags: ['login'],
           environment: 'homologação',
           mode: 'video',
@@ -27,6 +27,7 @@ describe('generateTestCaseWithAi', () => {
 
     expect(result.title).toBe('Validar login');
     expect(result.steps).toHaveLength(1);
+    expect(result.priority).toBe('Alta');
     expect(fetcher).toHaveBeenCalledWith(
       '/api/generate',
       expect.objectContaining({ method: 'POST' }),

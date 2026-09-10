@@ -23,12 +23,13 @@ export default {
       if (!input || typeof input.text !== 'string' || input.text.length > 12000) return json({ error: 'Envie uma descrição de até 12 mil caracteres.' }, 400);
       const response = await fetch(API_URL, {
         method: 'POST',
+        signal: AbortSignal.timeout(45000),
         headers: { Authorization: `Bearer ${env.NVIDIA_API_KEY}`, 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           model: MODEL,
           messages: [
             { role: 'system', content: 'Você é especialista em QA. Responda apenas JSON válido.' },
-            { role: 'user', content: `Crie um caso de teste de QA para: ${input.text}. Use {title,description,preconditions,priority,tags,environment,mode,verdict,steps}; cada passo possui action e expected. mode deve ser video e verdict NEEDS_REVIEW.` },
+            { role: 'user', content: `Crie um caso de teste de QA para: ${input.text}. Use {title,description,preconditions,priority,tags,environment,mode,verdict,steps}; cada passo possui action e expected. mode deve ser video, verdict NEEDS_REVIEW e priority deve ser exatamente Alta, Média ou Baixa.` },
           ],
           temperature: 0.2,
           max_tokens: 1400,
