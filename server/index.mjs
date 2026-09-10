@@ -6,7 +6,7 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), { status
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname !== '/api/generate') return new Response('Not found', { status: 404 });
+    if (url.pathname !== '/api/generate') return env.ASSETS.fetch(request);
     if (request.method !== 'POST') return json({ error: 'Método não permitido.' }, 405);
     if (!env.NVIDIA_API_KEY) return json({ error: 'A IA ainda não está configurada.' }, 503);
     try {
