@@ -1,4 +1,4 @@
-const MODEL = 'meta/llama-3.1-70b-instruct';
+const MODEL = 'nvidia/nemotron-3.5-lightning-30b-a3b';
 const API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions';
 const STATIC_FILES = __STATIC_FILES__;
 
