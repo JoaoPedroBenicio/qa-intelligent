@@ -18,7 +18,7 @@ import { TemplateGallery } from '@/features/test-cases/components/TemplateGaller
 import { VersionHistory } from '@/features/test-cases/components/VersionHistory';
 import { CsvImport } from '@/features/test-cases/components/CsvImport';
 import { generateSpec } from '@/features/test-cases/lib/specGenerator';
-import { polishTestCaseLocally } from '@/features/ai-copilot/lib/polishLocal';
+import { generateTestCaseWithAi } from '@/features/ai-copilot/lib/generateWithAi';
 import type { OnboardingPath } from '@/features/test-cases/components/HeroEmptyState';
 import type { TestCaseVersion } from '@/types/domain';
 
@@ -73,15 +73,15 @@ function App() {
     setCopilotOpen(true);
   };
 
-  const handleCopilotSend = (
+  const handleCopilotSend = async (
     text: string,
     attachments: { name: string; size: number; mimeType: string }[],
   ) => {
     const projectId = ensureProject();
-    const polished = polishTestCaseLocally({ text, attachments });
+    const generated = await generateTestCaseWithAi({ text, attachments });
     const version: Omit<TestCaseVersion, 'id' | 'createdAt'> = {
-      ...polished,
-      spec: generateSpec({ title: polished.title, steps: polished.steps }),
+      ...generated,
+      spec: generateSpec({ title: generated.title, steps: generated.steps }),
     };
     createFromVersion({ projectId, folderId: null, version });
     toast.success('Caso criado.');

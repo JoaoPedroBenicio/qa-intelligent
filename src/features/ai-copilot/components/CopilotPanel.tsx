@@ -17,7 +17,7 @@ import type { FileAttachment, TestCaseVersion } from '@/types/domain';
 interface CopilotPanelProps {
   projectId: string;
   initialFocus?: 'record' | 'attach' | 'template' | 'paste' | null;
-  onSend?: (text: string, attachments: { name: string; size: number; mimeType: string }[]) => void;
+  onSend?: (text: string, attachments: { name: string; size: number; mimeType: string }[]) => Promise<void> | void;
 }
 
 interface AttachedFile extends FileAttachment {
@@ -150,7 +150,7 @@ export function CopilotPanel({
     toast.message('Operação cancelada.');
   }, []);
 
-  const handleSend = useCallback(() => {
+  const handleSend = useCallback(async () => {
     const trimmed = text.trim();
     if (!trimmed && attachedFiles.length === 0) return;
 
@@ -171,7 +171,14 @@ export function CopilotPanel({
     setAttachedFiles([]);
 
     if (onSend) {
-      onSend(snapshotText, snapshotAttachments);
+      setBusy(true);
+      try {
+        await onSend(snapshotText, snapshotAttachments);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Não foi possível gerar o caso de teste.');
+      } finally {
+        setBusy(false);
+      }
       return;
     }
 
