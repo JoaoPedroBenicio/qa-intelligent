@@ -32,6 +32,7 @@ export default {
           ],
           temperature: 0.2,
           max_tokens: 1400,
+          chat_template_kwargs: { enable_thinking: false },
         }),
       });
       if (!response.ok) return json({ error: 'O serviço de IA não respondeu. Tente novamente.' }, 502);
